@@ -1,27 +1,21 @@
-// Import dependencies
 const express = require('express');
 const http = require('http');
 const socketIO = require('socket.io');
 
-// Set up server and port
 const port = process.env.PORT || 3000;
 const app = express();
 const server = http.createServer(app);
 const io = socketIO(server);
 
-// Static files middleware
 app.use(express.static(__dirname + "/"));
 
-// Initialize game data
 const MAX_ROOMS = 100;
 const games = Array.from({ length: MAX_ROOMS }, () => ({ players: 0, playerIds: [0, 0] }));
 
-// Serve the main HTML file
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html');
 });
 
-// Handle socket connections
 io.on('connection', (socket) => {
     let playerId = Math.floor(Math.random() * 1000) + 1;
     console.log(`Player ${playerId} connected.`);
@@ -39,7 +33,6 @@ io.on('connection', (socket) => {
             return;
         }
 
-        // Add player to the room
         games[roomId].playerIds[games[roomId].players] = playerId;
         games[roomId].players++;
 
