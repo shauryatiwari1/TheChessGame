@@ -1,5 +1,3 @@
-//This game.js code is modular and modern for getting same functions to play chess
-
 game = new Chess();
 var socket = io();
 
@@ -33,7 +31,7 @@ socket.on('play', function (msg) {
         play = false;
         state.innerHTML = "Game in progress"
     }
-    // console.log(msg)
+    
 });
 
 socket.on('move', function (msg) {
@@ -60,8 +58,7 @@ var greySquare = function (square) {
 };
 
 var onDragStart = function (source, piece) {
-    // do not pick up pieces if the game is over
-    // or if it's not that side's turn
+  
     if (game.game_over() === true || play ||
         (game.turn() === 'w' && piece.search(/^b/) !== -1) ||
         (game.turn() === 'b' && piece.search(/^w/) !== -1) ||
@@ -69,24 +66,22 @@ var onDragStart = function (source, piece) {
         (game.turn() === 'b' && color === 'white') ) {
             return false;
     }
-    // console.log({play, players});
+   
 };
 
 var onDrop = function (source, target) {
     removeGreySquares();
 
-    // see if the move is legal
     var move = game.move({
         from: source,
         to: target,
-        promotion: 'q' // NOTE: always promote to a queen for example simplicity
+        promotion: 'q' 
     });
     if (game.game_over()) {
         state.innerHTML = 'GAME OVER';
         socket.emit('gameOver', roomId)
     }
 
-    // illegal move
     if (move === null) return 'snapback';
     else
         socket.emit('move', { move: move, board: game.fen(), room: roomId });
@@ -94,19 +89,16 @@ var onDrop = function (source, target) {
 };
 
 var onMouseoverSquare = function (square, piece) {
-    // get list of possible moves for this square
+ 
     var moves = game.moves({
         square: square,
         verbose: true
     });
 
-    // exit if there are no moves available for this square
     if (moves.length === 0) return;
 
-    // highlight the square they moused over
     greySquare(square);
 
-    // highlight the possible squares for this piece
     for (var i = 0; i < moves.length; i++) {
         greySquare(moves[i].to);
     }
@@ -149,6 +141,5 @@ socket.on('player', (msg) => {
     };
     board = ChessBoard('board', cfg);
 });
-// console.log(color)
 
 var board;
