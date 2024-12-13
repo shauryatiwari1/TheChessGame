@@ -4,22 +4,16 @@
   const COLUMNS = 'abcdefgh'.split('');
   const ROWS = '12345678'.split('');
 
-  // Utility function for validating strings with regex patterns
   const isValid = (str, regex) => typeof str === 'string' && regex.test(str);
 
-  // Validate a move (e.g., "e2-e4")
   const validMove = move => isValid(move, /^[a-h][1-8]-[a-h][1-8]$/);
 
-  // Validate a square (e.g., "e2")
   const validSquare = square => isValid(square, /^[a-h][1-8]$/);
 
-  // Convert piece to standard code (e.g., 'bK' for black King)
   const fenToPieceCode = piece => piece === piece.toLowerCase() ? `b${piece.toUpperCase()}` : `w${piece.toUpperCase()}`;
 
-  // Convert piece code to standard FEN notation (e.g., 'bK' to 'k')
   const pieceCodeToFen = code => code[0] === 'w' ? code[1].toUpperCase() : code[1].toLowerCase();
 
-  // Convert FEN string to a position object
   const fenToObj = fen => {
     const rows = fen.split('/');
     let position = {};
@@ -28,7 +22,7 @@
       let colIndex = 0;
       [...row].forEach(cell => {
         if (/\d/.test(cell)) {
-          colIndex += parseInt(cell, 10); // Skip empty squares
+          colIndex += parseInt(cell, 10); 
         } else {
           position[`${COLUMNS[colIndex]}${8 - rowIndex}`] = fenToPieceCode(cell);
           colIndex++;
@@ -39,7 +33,6 @@
     return position;
   };
 
-  // Convert position object to FEN string
   const objToFen = position => {
     let fen = '';
     for (let row = 8; row >= 1; row--) {
@@ -54,7 +47,6 @@
     return fen;
   };
 
-  // Chessboard class definition
   class ChessBoard {
     constructor(containerElOrId, cfg = {}) {
       this.container = document.querySelector(containerElOrId);
@@ -64,7 +56,6 @@
       this.updateBoard(this.currentPosition);
     }
 
-    // Create the chessboard (8x8 grid)
     createBoard() {
       const fragment = document.createDocumentFragment();
       let square;
@@ -82,7 +73,6 @@
       this.boardEl.appendChild(fragment);
     }
 
-    // Update the board with the current position
     updateBoard(position) {
       for (let square in position) {
         const squareEl = this.boardEl.querySelector(`[data-square="${square}"]`);
@@ -93,7 +83,6 @@
       }
     }
 
-    // Move a piece from one square to another (e.g., "e2-e4")
     movePiece(move) {
       if (!validMove(move)) {
         console.error("Invalid move format.");
@@ -108,15 +97,12 @@
         return;
       }
 
-      // Remove piece from starting square and place it on the destination
       this.currentPosition[to] = this.currentPosition[from];
       delete this.currentPosition[from];
 
-      // Update the board
       this.updateBoard(this.currentPosition);
     }
 
-    // Get the current position as a FEN string
     getPosition() {
       return objToFen(this.currentPosition);
     }
